@@ -1,0 +1,20 @@
+{
+  "dependency_count": 4,
+  "exposure_counts": {
+    "ASYNC_RUNTIME": 3,
+    "DATABASE_PERSISTENCE": 1,
+    "NETWORK_CLIENT": 1,
+    "NETWORK_SERVER": 2
+  },
+  "generated_files": [
+    "DS2_REPORT.md",
+    "ds2_graph.json",
+    "ds2_receipt.json"
+  ],
+  "graph_sha256": "3998062b39b99613411191c592218cbb519a4f1e95702e69b4d409eb1a175e15",
+  "report_sha256": "065248ad061114542b6760c9dc049ceb668b419fdd10c70ab1d531af52585809",
+  "scanned_path": "tests/fixtures/fastapi_app",
+  "tool_name": "ds2",
+  "version": "0.1.0",
+  "warning_count": 0
+}

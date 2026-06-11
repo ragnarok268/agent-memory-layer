@@ -1,0 +1,105 @@
+{
+  "build_runtime_notes": [
+    "Build-only dependencies: none detected.",
+    "Runtime-observed packages: fastapi, httpx, sqlalchemy, starlette.",
+    "Transitive dependency graph is partial.",
+    "Exposure classes observed: ASYNC_RUNTIME, DATABASE_PERSISTENCE, NETWORK_CLIENT, NETWORK_SERVER."
+  ],
+  "dependency_chains": [],
+  "dependency_sources": [
+    "requirements.txt",
+    "source_import_scan"
+  ],
+  "direct_dependencies": [
+    {
+      "authority_state": "HIGH_ATTENTION",
+      "build_only": false,
+      "direct": true,
+      "exposures": [
+        "ASYNC_RUNTIME",
+        "NETWORK_SERVER"
+      ],
+      "import_names": [
+        "fastapi"
+      ],
+      "imported": true,
+      "installed": false,
+      "name": "fastapi",
+      "notes": [
+        "Direct dependency is also observed in source imports."
+      ],
+      "requirement": "fastapi==0.115.0",
+      "source": "requirements.txt"
+    },
+    {
+      "authority_state": "REVIEW_RECOMMENDED",
+      "build_only": false,
+      "direct": true,
+      "exposures": [
+        "ASYNC_RUNTIME",
+        "NETWORK_CLIENT"
+      ],
+      "import_names": [
+        "httpx"
+      ],
+      "imported": true,
+      "installed": false,
+      "name": "httpx",
+      "notes": [
+        "Direct dependency is also observed in source imports."
+      ],
+      "requirement": "httpx==0.27.0",
+      "source": "requirements.txt"
+    },
+    {
+      "authority_state": "REVIEW_RECOMMENDED",
+      "build_only": false,
+      "direct": true,
+      "exposures": [
+        "DATABASE_PERSISTENCE"
+      ],
+      "import_names": [
+        "sqlalchemy"
+      ],
+      "imported": true,
+      "installed": false,
+      "name": "sqlalchemy",
+      "notes": [
+        "Direct dependency is also observed in source imports."
+      ],
+      "requirement": "sqlalchemy==2.0.36",
+      "source": "requirements.txt"
+    },
+    {
+      "authority_state": "HIGH_ATTENTION",
+      "build_only": false,
+      "direct": false,
+      "exposures": [
+        "ASYNC_RUNTIME",
+        "NETWORK_SERVER"
+      ],
+      "import_names": [
+        "starlette"
+      ],
+      "imported": true,
+      "installed": false,
+      "name": "starlette",
+      "notes": [],
+      "requirement": null,
+      "source": "imports"
+    }
+  ],
+  "edges": [],
+  "manual_review_notes": [
+    "High-attention packages expand execution authority and should be reviewed for actual runtime reachability."
+  ],
+  "observed_imports": [
+    "fastapi",
+    "httpx",
+    "sqlalchemy",
+    "starlette"
+  ],
+  "project_path": "tests/fixtures/fastapi_app",
+  "transitive_partial": true,
+  "warnings": []
+}

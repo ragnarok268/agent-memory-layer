@@ -1,0 +1,18 @@
+id: "SCP-F07E0108"
+layer: "event"
+type: "dependency_decision"
+status: "active"
+title: "Dependency decision"
+decision: "Continue using FastAPI instead of adding another package."
+why: "Matched dependency decision language."
+evidence:
+  - "Change summary: Continue using FastAPI instead of adding another package."
+constraints: []
+impact: "Future work should treat this summary as a preserved dependency_decision."
+future_trap: "Future contributors may repeat this work without realizing the decision was already preserved."
+revisit_if:
+  - "A newer SCP record supersedes this decision."
+next: "Review the generated SCP card before relying on it for future work."
+effective_from: "adoption"
+scope: "project"
+preservation_value: "medium"

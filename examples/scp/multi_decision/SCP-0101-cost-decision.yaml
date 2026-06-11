@@ -1,0 +1,23 @@
+id: SCP-0101
+layer: event
+type: cost_decision
+status: active
+title: Keep SCP v0.1 local and dependency-light
+decision: SCP v0.1 will avoid cloud services, paid APIs, vector databases, and LLM calls.
+why: The free version should be easy to try, cheap to run, and safe for local project use.
+evidence:
+  - Build report confirms no LLM/API/cloud/telemetry was added.
+constraints:
+  - free open-source tool
+  - local-first
+  - no telemetry
+  - no paid service dependency
+impact: Users can run SCP without budget approval, account setup, or external service risk.
+future_trap: Future contributors may add cloud memory, vector search, or paid model calls too early and raise adoption friction.
+revisit_if:
+  - A local optional retrieval layer is added.
+  - Users request an opt-in paid or hosted integration.
+next: Keep v0.1 deterministic and local while validating usefulness.
+effective_from: v0.1
+scope: implementation
+preservation_value: high

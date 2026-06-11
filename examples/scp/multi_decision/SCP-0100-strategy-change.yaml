@@ -1,0 +1,20 @@
+id: SCP-0100
+layer: event
+type: strategy_change
+status: active
+title: Position SCP as forward-only decision preservation
+decision: SCP will preserve important project decisions from adoption forward instead of attempting to reconstruct past project history.
+why: Reconstructing past reasoning risks hallucination and false confidence; forward-only preservation sets clear expectations and reduces ambiguity.
+evidence:
+  - README states SCP does not reconstruct the past and starts preserving reasoning from adoption forward.
+constraints:
+  - Do not let AI invent missing history.
+  - Preserve reasoning only from adoption forward.
+impact: SCP is scoped as a forward-only preservation system rather than a retroactive archaeology tool.
+future_trap: Future users or AI sessions may assume SCP can reconstruct old project history automatically.
+revisit_if:
+  - A verified evidence-backed import process is added for legacy project history.
+next: Keep README and examples explicit about adoption-forward behavior.
+effective_from: adoption
+scope: positioning
+preservation_value: high
