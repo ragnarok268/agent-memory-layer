@@ -126,6 +126,10 @@ Known threats to validity include small task sets, local-only runs, and mixed ti
 - DS2: [github.com/ragnarok268/DS2](https://github.com/ragnarok268/DS2)
 - SCP: [github.com/ragnarok268/scp](https://github.com/ragnarok268/scp)
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 ## Feedback
 
 Feedback is most useful when it is concrete:
