@@ -1,29 +1,32 @@
-# Agent guidance for SCP
+# Agent Guidance
 
-Before making changes:
+Before work:
 
 1. Read `README.md`.
-2. Read `docs/SCP_CANON.md`.
-3. Read `docs/SCP_SCHEMA.md`.
-4. If `.scp/origin.yaml` exists, read it before generating or consuming SCP records.
-5. Read relevant SCP records under `.scp/` or `examples/scp/` when they apply to the task.
+2. Read `AGENT_BOOTSTRAP.md`.
+3. If present, read `intent.yaml`.
+4. If present, read `artifacts/knowledge/guardrail_summary.md`.
+5. If present, read recent files under `artifacts/knowledge/scp_drafts/`.
 
-## SCP rules
+During work:
 
-- SCP works from adoption forward only.
-- Do not invent missing project history.
-- Do not infer Canon meanings.
-- Use only Canon-defined event types, lifecycle states, card layers, and fields.
-- Create SCP records only when a Canon event applies.
-- Do not create SCP records for typo fixes, formatting changes, comment edits, routine refactors, trivial code movement, or dependency lockfile noise.
-- If no Canon event applies, do not create an SCP record by default.
-- Treat humans as decision makers and reviewers.
-- Treat AI as maintainer of the reasoning layer, not owner of project decisions.
+1. Make small deterministic changes.
+2. Keep artifacts human-readable and machine-readable.
+3. Do not present this methodology as a formal standard.
 
-## When preserving a decision
+After meaningful changes:
 
-1. Classify the event using `docs/SCP_CANON.md`.
-2. Generate or update an SCP record using approved schema fields.
-3. Include `why`, `evidence`, `constraints`, `impact`, `future_trap`, and `revisit_if` when available.
-4. Validate SCP records before finishing:
-   `$env:PYTHONPATH=(Resolve-Path src); python -m scp.cli validate examples\scp`
+1. Run `python automation/guardrail_runner.py --changed <changed files>`.
+2. Read `artifacts/knowledge/guardrail_summary.md`.
+3. If IA is blocked because `intent.yaml` is missing, review `artifacts/knowledge/intent_draft.yaml`.
+4. If IA fails and the fix is clear, repair and rerun the guardrails.
+5. If DS2 shows new capability surface, summarize it for human review.
+6. If an SCP draft is generated, leave it as a draft unless explicitly approved.
+7. If relevant, run `python -m pytest`.
+
+Reference:
+
+- `WORKFLOW.md`
+- `AUTOMATION_ARCHITECTURE.md`
+- `EVENT_MODEL.md`
+- `AGENT_BOOTSTRAP.md`
