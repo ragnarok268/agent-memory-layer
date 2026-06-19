@@ -9,12 +9,12 @@ It is meant to be small enough for solo builders and structured enough for repea
 ## Core loop
 
 Idea
-→ AI generates code
-→ IA verifies intent
-→ DS2 maps dependency/capability surfaces
-→ SCP preserves rationale
-→ AI repairs or human reviews
-→ ship with evidence
+-> AI generates code
+-> IA verifies intent
+-> DS2 maps dependency/capability surfaces
+-> SCP preserves rationale
+-> AI repairs or human reviews
+-> ship with evidence
 
 ## Step 1: Start with an idea
 

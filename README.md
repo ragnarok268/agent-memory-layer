@@ -2,13 +2,22 @@
 
 Agent Memory Layer is an experimental, documentation-first workflow for making AI-assisted software work easier to review, repair, and continue later.
 
+This repository is designed for AI-assisted engineering workflows. It provides repository-local memory, intent, decision, and evidence artifacts that can be read by both humans and AI coding agents such as Codex, Cursor, Claude Code, Gemini, or similar systems.
+
+It is not intended to be a conventional Python library, package, SDK, framework, or end-user application. The included Python scripts are thin repo-local automation helpers for routing checks and writing artifacts.
+
 It combines three open-source ideas:
 
 - IA for intent verification
 - DS2 for dependency and capability visibility
 - SCP for preserved decisions and rationale
 
-This repository is not a framework or an industry standard. It is an open-source methodology and research direction that is currently evaluated with local automation and reproducible A/B trials.
+This repository is not an industry standard. It is an open-source methodology and research direction that is currently evaluated with local automation and reproducible A/B trials.
+
+## Start here
+
+- For humans: start with [README.md](README.md), [WORKFLOW.md](WORKFLOW.md), and [EVIDENCE.md](EVIDENCE.md).
+- For AI agents: start with [AGENT_BOOTSTRAP.md](AGENT_BOOTSTRAP.md), [AGENTS.md](AGENTS.md), and [ARTIFACT_MODEL.md](ARTIFACT_MODEL.md).
 
 ## What problem it solves
 
@@ -67,7 +76,15 @@ python -m pytest
 python automation/guardrail_runner.py --changed README.md automation/guardrail_runner.py
 ```
 
-If `ia` or `ds2` are not installed, the runner reports them as skipped rather than failing.
+Required local validation for this repository is `python -m pytest`.
+
+Companion tools are optional but recommended for the full workflow:
+
+- `ia` enables intent verification.
+- `ds2` enables dependency and capability-surface scanning.
+- SCP is represented here by local draft artifacts; the separate SCP project provides the broader decision-preservation reference implementation.
+
+If `ia` or `ds2` are not installed, the runner reports them as skipped rather than failing. That means the repo-local proof of concept can still be tested without installing the full companion toolchain.
 
 ## What evidence currently exists
 
