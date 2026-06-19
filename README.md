@@ -35,12 +35,16 @@ When that memory is missing, every future human or AI agent has to rediscover it
 
 This project is most relevant to:
 
-- AI-assisted builders
+- AI-assisted developers who rely heavily on coding agents
 - solo founders
 - self-taught developers
 - domain experts building internal tools
 - engineering reviewers
 - teams experimenting with AI coding agents
+- junior and mid-level developers who want clearer intent, review, and context-preservation habits
+- experienced engineers who want durable engineering memory and reproducible handoff
+
+It is usually less useful for throwaway scripts, trivial prototypes, teams with little AI usage, or teams that already have strong durable engineering-memory practices.
 
 ## How it works
 
@@ -56,25 +60,28 @@ Idea
 
 The goal is to make preserved engineering context feel more like quiet infrastructure than manual ceremony.
 
-## Quick start
+## First 30 minutes
 
 This repo is documentation-first and uses a thin local automation layer.
 
 There is no package install step for the repo itself.
 
-1. Read [WORKFLOW.md](WORKFLOW.md).
-2. Read [AGENT_BOOTSTRAP.md](AGENT_BOOTSTRAP.md).
+1. Read this README and [WORKFLOW.md](WORKFLOW.md).
+2. If you are using Codex, Cursor, Claude Code, Gemini, or a similar agent, read [AGENT_BOOTSTRAP.md](AGENT_BOOTSTRAP.md).
 3. Run the test suite:
 
 ```bash
 python -m pytest
 ```
 
-4. Try the guardrail runner:
+4. Make a small documentation or code change.
+5. Run the guardrail runner on the changed files:
 
 ```bash
 python automation/guardrail_runner.py --changed README.md automation/guardrail_runner.py
 ```
+
+6. Review the generated artifacts under `artifacts/knowledge/`.
 
 Required local validation for this repository is `python -m pytest`.
 
@@ -111,9 +118,11 @@ Not yet established:
 
 Known threats to validity include small task sets, local-only runs, and mixed timing methodologies across the project history.
 
+The next validation milestone is broader external use: more models, more developers, longer projects, and real-world case studies.
+
 ## Where to start
 
-- Quick start and overview: [README.md](README.md)
+- Overview and first 30 minutes: [README.md](README.md)
 - Core workflow: [WORKFLOW.md](WORKFLOW.md)
 - Automation design: [AUTOMATION_ARCHITECTURE.md](AUTOMATION_ARCHITECTURE.md)
 - Agent operating instructions: [AGENTS.md](AGENTS.md)

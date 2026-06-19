@@ -89,3 +89,9 @@ Weaker claim:
 - the workflow improves elapsed completion time or overall productivity
 
 That claim needs more interactive trials and more than one model.
+
+## Next validation milestone
+
+The next evidence milestone is broader external use across more AI coding agents, more developers, longer-running projects, and real-world case studies.
+
+Until that happens, the evidence should be read as useful preliminary signal rather than broad validation.
