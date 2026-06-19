@@ -11,6 +11,8 @@ Before modifying this repository, an AI agent should read:
 
 The goal is to load existing workflow memory before making new changes.
 
+The complete workflow expects agents to reason across intent, capability surface, and preserved engineering memory. Missing tools or artifacts should be handled gracefully, but they are part of the intended operating model rather than unrelated add-ons.
+
 ## Minimal working loop
 
 1. Read the current task and repo instructions.

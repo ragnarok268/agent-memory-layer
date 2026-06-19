@@ -4,6 +4,8 @@
 
 This repository does not try to turn IA, DS2, and SCP into a new framework.
 
+It treats their core capabilities as an integrated operating model: intent verification, dependency/capability awareness, and preserved engineering memory.
+
 It shows how a thin automation layer can make the workflow happen by default:
 
 - capture intent
@@ -110,6 +112,8 @@ This thin layer is designed to stay local-first where practical:
 - no secrets
 - no telemetry
 - optional external tool usage only when already installed
+
+The external commands are optional in the proof of concept so the workflow can degrade gracefully. The architecture itself is still built around the three capabilities working together.
 
 ## Why this matters
 

@@ -6,11 +6,11 @@ This repository is designed for AI-assisted engineering workflows. It provides r
 
 It is not intended to be a conventional Python library, package, SDK, framework, or end-user application. The included Python scripts are thin repo-local automation helpers for routing checks and writing artifacts.
 
-It combines three open-source ideas:
+It is built around three complementary capabilities:
 
-- IA for intent verification
-- DS2 for dependency and capability visibility
-- SCP for preserved decisions and rationale
+- intent verification, represented by IA
+- dependency and capability awareness, represented by DS2
+- engineering memory, represented by SCP
 
 This repository is not an industry standard. It is an open-source methodology and research direction that is currently evaluated with local automation and reproducible A/B trials.
 
@@ -78,7 +78,9 @@ python automation/guardrail_runner.py --changed README.md automation/guardrail_r
 
 Required local validation for this repository is `python -m pytest`.
 
-Companion tools are optional but recommended for the full workflow:
+The intended operating model combines intent verification, dependency/capability awareness, and engineering memory. The implementation is modular, so lightweight use can omit or replace individual tools, but the complete methodology assumes these capabilities work together.
+
+External tool installation is optional for repo-local validation:
 
 - `ia` enables intent verification.
 - `ds2` enables dependency and capability-surface scanning.

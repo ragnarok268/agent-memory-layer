@@ -6,6 +6,8 @@ This workflow connects idea, generation, verification, dependency awareness, pre
 
 It is meant to be small enough for solo builders and structured enough for repeatable AI-assisted work.
 
+The intended workflow combines intent verification, dependency/capability awareness, and engineering memory. Individual capabilities can be adopted independently in lightweight scenarios, but the methodology is designed around their combined use.
+
 ## Core loop
 
 Idea
