@@ -1,0 +1,36 @@
+{
+  "architecture_regression": false,
+  "condition": "baseline",
+  "constraint_violations": 0,
+  "files_changed": 3,
+  "intent_violations": 0,
+  "lines_changed": 12,
+  "memory_artifact_consulted": false,
+  "memory_artifact_updated_correctly": null,
+  "prior_decision_preserved": null,
+  "rediscovery_required": null,
+  "repair_attempts": 0,
+  "risky_capabilities_added": 0,
+  "run_id": "codex-baseline-task4",
+  "scoring_sources": {
+    "manual_or_metadata": [
+      "repair_attempts",
+      "prior_decision_preserved",
+      "rediscovery_required",
+      "memory_artifact_consulted",
+      "memory_artifact_updated_correctly"
+    ],
+    "rule_based": [
+      "tests_passed when metadata or test output is available",
+      "intent_violations",
+      "unnecessary_dependencies_added",
+      "risky_capabilities_added",
+      "architecture_regression",
+      "files_changed",
+      "lines_changed"
+    ]
+  },
+  "task_id": "task4",
+  "tests_passed": 1,
+  "unnecessary_dependencies_added": 0
+}

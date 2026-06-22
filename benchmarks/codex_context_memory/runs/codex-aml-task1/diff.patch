@@ -1,0 +1,95 @@
+--- a/app.py
++++ b/app.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import json
++import sys
+ from pathlib import Path
+ 
+ 
+@@ -22,6 +23,26 @@
+ def is_configured(config: dict | None = None) -> bool:
+     active_config = config or load_config()
+     return bool(active_config.get("project_name")) and active_config.get("local_only") is True
++
++
++def build_status_report(config: dict | None = None) -> dict:
++    active_config = config or load_config()
++    return {
++        "configured": is_configured(active_config),
++        "project_name": active_config.get("project_name", ""),
++        "local_only": active_config.get("local_only") is True,
++    }
++
++
++def format_status_report(report: dict) -> str:
++    state = "ok" if report["configured"] else "not configured"
++    project_name = report["project_name"] or "unknown"
++    local_only = "yes" if report["local_only"] else "no"
++    return f"status: {state}; project_name: {project_name}; local_only: {local_only}"
++
++
++def status_check(config: dict | None = None) -> str:
++    return format_status_report(build_status_report(config))
+ 
+ 
+ def summarize_project(name: str, completed_tasks: int = 0, open_tasks: int = 0) -> dict:
+@@ -53,3 +74,17 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def main(argv: list[str] | None = None) -> int:
++    args = list(sys.argv[1:] if argv is None else argv)
++    if args == ["status"]:
++        report = build_status_report()
++        print(format_status_report(report))
++        return 0 if report["configured"] else 1
++
++    print("Usage: python app.py status")
++    return 2
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,6 @@
+ import unittest
++from contextlib import redirect_stdout
++from io import StringIO
+ 
+ import app
+ 
+@@ -17,7 +19,29 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_status_check_reports_configured_state(self):
++        self.assertEqual(
++            app.status_check({"project_name": "demo", "local_only": True}),
++            "status: ok; project_name: demo; local_only: yes",
++        )
++
++    def test_status_check_reports_misconfigured_state(self):
++        self.assertEqual(
++            app.status_check({"project_name": "demo", "local_only": False}),
++            "status: not configured; project_name: demo; local_only: no",
++        )
++
++    def test_status_command_outputs_status(self):
++        output = StringIO()
++        with redirect_stdout(output):
++            exit_code = app.main(["status"])
++
++        self.assertEqual(exit_code, 0)
++        self.assertEqual(
++            output.getvalue().strip(),
++            "status: ok; project_name: sample-local-project; local_only: yes",
++        )
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

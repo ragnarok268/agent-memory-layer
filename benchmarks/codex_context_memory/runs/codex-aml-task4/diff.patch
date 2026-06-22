@@ -1,0 +1,120 @@
+--- a/app.py
++++ b/app.py
+@@ -10,6 +10,8 @@
+     "project_name": "sample-local-project",
+     "local_only": True,
+ }
++
++FEATURE_REGISTRY_PATH = Path(__file__).with_name("registry.json")
+ 
+ 
+ def load_config(path: str | Path = "project_config.json") -> dict:
+@@ -40,16 +42,41 @@
+     )
+ 
+ 
+-FEATURE_FLAGS = {
+-    "experimental_summary_view": False,
++DEFAULT_FEATURE_REGISTRY = {
++    "flags": {
++        "experimental_summary_view": {
++            "enabled": False,
++            "description": "Default-off local experiment for an alternate summary display.",
++        },
++        "experimental_status_normalization": {
++            "enabled": False,
++            "description": "Default-off local experiment for stricter status normalization.",
++        },
++    },
+ }
+ 
+ 
++class FeatureRegistry:
++    def __init__(self, path: str | Path = FEATURE_REGISTRY_PATH):
++        self.path = Path(path)
++
++    def load(self) -> dict:
++        if not self.path.exists():
++            return dict(DEFAULT_FEATURE_REGISTRY)
++        return json.loads(self.path.read_text(encoding="utf-8"))
++
++    def is_enabled(self, flag_name: str) -> bool:
++        flags = self.load().get("flags", {})
++        return bool(flags.get(flag_name, {}).get("enabled", False))
++
++
+ def is_feature_enabled(flag_name: str, flags: dict | None = None) -> bool:
+-    active_flags = flags or FEATURE_FLAGS
+-    return bool(active_flags.get(flag_name, False))
++    if flags is None:
++        return FeatureRegistry().is_enabled(flag_name)
++    if "flags" in flags:
++        return bool(flags["flags"].get(flag_name, {}).get("enabled", False))
++    return bool(flags.get(flag_name, False))
+ 
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+-
+--- a/registry.json
++++ b/registry.json
+@@ -0,0 +1,12 @@
++{
++  "flags": {
++    "experimental_summary_view": {
++      "enabled": false,
++      "description": "Default-off local experiment for an alternate summary display."
++    },
++    "experimental_status_normalization": {
++      "enabled": false,
++      "description": "Default-off local experiment for stricter status normalization."
++    }
++  }
++}
+--- a/test_app.py
++++ b/test_app.py
+@@ -14,10 +14,43 @@
+     def test_feature_flags_default_off(self):
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
+ 
++    def test_feature_registry_reads_documented_default_off_flag(self):
++        registry = app.FeatureRegistry()
++        flag = registry.load()["flags"]["experimental_summary_view"]
++        self.assertFalse(flag["enabled"])
++        self.assertIn("Default-off", flag["description"])
++
++    def test_feature_registry_reads_second_default_off_flag(self):
++        registry = app.FeatureRegistry()
++        flag = registry.load()["flags"]["experimental_status_normalization"]
++        self.assertFalse(flag["enabled"])
++        self.assertIn("Default-off", flag["description"])
++
++    def test_feature_registry_allows_enabled_override(self):
++        flags = {
++            "flags": {
++                "experimental_summary_view": {
++                    "enabled": True,
++                    "description": "test override",
++                },
++            },
++        }
++        self.assertTrue(app.is_feature_enabled("experimental_summary_view", flags))
++
++    def test_second_feature_flag_allows_enabled_override(self):
++        flags = {
++            "flags": {
++                "experimental_status_normalization": {
++                    "enabled": True,
++                    "description": "test override",
++                },
++            },
++        }
++        self.assertTrue(app.is_feature_enabled("experimental_status_normalization", flags))
++
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

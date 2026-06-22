@@ -1,0 +1,135 @@
+--- a/app.py
++++ b/app.py
+@@ -10,6 +10,8 @@
+     "project_name": "sample-local-project",
+     "local_only": True,
+ }
++
++DEFAULT_RECENT_SUMMARIES_PATH = "recent_task_summaries.json"
+ 
+ 
+ def load_config(path: str | Path = "project_config.json") -> dict:
+@@ -32,6 +34,30 @@
+     }
+ 
+ 
++def load_recent_task_summaries(path: str | Path = DEFAULT_RECENT_SUMMARIES_PATH) -> list[dict]:
++    summaries_path = Path(path)
++    if not summaries_path.exists():
++        return []
++    return json.loads(summaries_path.read_text(encoding="utf-8"))
++
++
++def save_recent_task_summary(
++    summary: dict,
++    path: str | Path = DEFAULT_RECENT_SUMMARIES_PATH,
++    limit: int = 5,
++) -> list[dict]:
++    recent_summaries = load_recent_task_summaries(path)
++    recent_summaries.append(dict(summary))
++    recent_summaries = recent_summaries[-int(limit) :]
++
++    summaries_path = Path(path)
++    summaries_path.write_text(
++        json.dumps(recent_summaries, indent=2, sort_keys=True) + "\n",
++        encoding="utf-8",
++    )
++    return recent_summaries
++
++
+ def format_summary(summary: dict) -> str:
+     return (
+         f"{summary['name']}: "
+@@ -52,4 +78,3 @@
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+-
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,6 +1,17 @@
+ import unittest
++from pathlib import Path
+ 
+ import app
++
++
++TEST_DIR = Path(__file__).parent
++
++
++def remove_if_possible(path: Path) -> None:
++    try:
++        path.unlink(missing_ok=True)
++    except PermissionError:
++        pass
+ 
+ 
+ class AppTests(unittest.TestCase):
+@@ -11,6 +22,37 @@
+         summary = app.summarize_project("demo", completed_tasks=2, open_tasks=3)
+         self.assertEqual(app.format_summary(summary), "demo: 2 completed, 3 open")
+ 
++    def test_recent_task_summaries_persist_to_disk(self):
++        summary_path = TEST_DIR / "test_recent_task_summaries.json"
++        summary_path.write_text("[]\n", encoding="utf-8")
++        try:
++            summary = app.summarize_project("demo", completed_tasks=2, open_tasks=3)
++
++            saved = app.save_recent_task_summary(summary, path=summary_path)
++
++            self.assertEqual(saved, [summary])
++            self.assertEqual(app.load_recent_task_summaries(summary_path), [summary])
++        finally:
++            remove_if_possible(summary_path)
++
++    def test_recent_task_summaries_keep_limit(self):
++        summary_path = TEST_DIR / "test_recent_task_summaries_limit.json"
++        summary_path.write_text("[]\n", encoding="utf-8")
++        try:
++            for index in range(3):
++                app.save_recent_task_summary(
++                    app.summarize_project(f"demo-{index}"),
++                    path=summary_path,
++                    limit=2,
++                )
++
++            self.assertEqual(
++                [summary["name"] for summary in app.load_recent_task_summaries(summary_path)],
++                ["demo-1", "demo-2"],
++            )
++        finally:
++            remove_if_possible(summary_path)
++
+     def test_feature_flags_default_off(self):
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
+ 
+@@ -20,4 +62,3 @@
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-
+--- a/test_recent_task_summaries.json
++++ b/test_recent_task_summaries.json
+@@ -0,0 +1,7 @@
++[
++  {
++    "completed_tasks": 2,
++    "name": "demo",
++    "open_tasks": 3
++  }
++]
+--- a/test_recent_task_summaries_limit.json
++++ b/test_recent_task_summaries_limit.json
+@@ -0,0 +1,12 @@
++[
++  {
++    "completed_tasks": 0,
++    "name": "demo-1",
++    "open_tasks": 0
++  },
++  {
++    "completed_tasks": 0,
++    "name": "demo-2",
++    "open_tasks": 0
++  }
++]

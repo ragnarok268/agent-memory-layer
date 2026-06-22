@@ -1,0 +1,111 @@
+--- a/app.py
++++ b/app.py
+@@ -10,6 +10,8 @@
+     "project_name": "sample-local-project",
+     "local_only": True,
+ }
++
++DEFAULT_REGISTRY_PATH = Path(__file__).with_name("registry.json")
+ 
+ 
+ def load_config(path: str | Path = "project_config.json") -> dict:
+@@ -40,16 +42,41 @@
+     )
+ 
+ 
+-FEATURE_FLAGS = {
+-    "experimental_summary_view": False,
+-}
++class FeatureRegistry:
++    """Local, file-backed feature flag registry with default-off flags."""
++
++    def __init__(self, path: str | Path = DEFAULT_REGISTRY_PATH):
++        self.path = Path(path)
++        self._flags = self._load_flags()
++
++    def _load_flags(self) -> dict:
++        if not self.path.exists():
++            return {}
++
++        registry = json.loads(self.path.read_text(encoding="utf-8"))
++        return dict(registry.get("flags", {}))
++
++    def is_enabled(self, flag_name: str) -> bool:
++        flag = self._flags.get(flag_name)
++        if isinstance(flag, dict):
++            return bool(flag.get("enabled", False))
++        return bool(flag) if flag is not None else False
+ 
+ 
+-def is_feature_enabled(flag_name: str, flags: dict | None = None) -> bool:
+-    active_flags = flags or FEATURE_FLAGS
+-    return bool(active_flags.get(flag_name, False))
++def is_feature_enabled(flag_name: str, flags: dict | FeatureRegistry | None = None) -> bool:
++    if isinstance(flags, FeatureRegistry):
++        return flags.is_enabled(flag_name)
++    if flags is not None:
++        return bool(flags.get(flag_name, False))
++    return FeatureRegistry().is_enabled(flag_name)
+ 
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def format_status(status: str, flags: dict | FeatureRegistry | None = None) -> str:
++    normalized = normalize_status(status)
++    if is_feature_enabled("experimental_status_badge", flags):
++        return f"[{normalized}]"
++    return normalized
+--- a/registry.json
++++ b/registry.json
+@@ -0,0 +1,10 @@
++{
++  "flags": {
++    "experimental_summary_view": {
++      "enabled": false
++    },
++    "experimental_status_badge": {
++      "enabled": false
++    }
++  }
++}
+--- a/test_app.py
++++ b/test_app.py
+@@ -14,10 +14,35 @@
+     def test_feature_flags_default_off(self):
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
+ 
++    def test_feature_registry_reads_registry_json(self):
++        registry = app.FeatureRegistry()
++        self.assertFalse(registry.is_enabled("experimental_summary_view"))
++        self.assertFalse(registry.is_enabled("experimental_status_badge"))
++
++    def test_feature_registry_defaults_unknown_flags_off(self):
++        registry = app.FeatureRegistry()
++        self.assertFalse(registry.is_enabled("missing_feature"))
++
++    def test_feature_registry_supports_enabled_flags(self):
++        registry = app.FeatureRegistry()
++        registry._flags = {"local_preview": {"enabled": True}}
++        self.assertTrue(registry.is_enabled("local_preview"))
++
++    def test_is_feature_enabled_accepts_legacy_flag_dict(self):
++        self.assertTrue(app.is_feature_enabled("local_preview", {"local_preview": True}))
++
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
++
++    def test_format_status_defaults_to_normalized_status(self):
++        self.assertEqual(app.format_status(" OK "), "ok")
++
++    def test_format_status_supports_experimental_badge_feature(self):
++        self.assertEqual(
++            app.format_status(" OK ", {"experimental_status_badge": True}),
++            "[ok]",
++        )
+ 
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

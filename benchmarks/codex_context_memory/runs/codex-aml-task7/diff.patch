@@ -1,0 +1,87 @@
+--- a/app.py
++++ b/app.py
+@@ -9,6 +9,10 @@
+ DEFAULT_CONFIG = {
+     "project_name": "sample-local-project",
+     "local_only": True,
++}
++
++DEFAULT_FEATURE_FLAGS = {
++    "experimental_summary_view": False,
+ }
+ 
+ 
+@@ -40,16 +44,34 @@
+     )
+ 
+ 
+-FEATURE_FLAGS = {
+-    "experimental_summary_view": False,
+-}
++FEATURE_FLAGS = dict(DEFAULT_FEATURE_FLAGS)
+ 
+ 
+-def is_feature_enabled(flag_name: str, flags: dict | None = None) -> bool:
++class FeatureRegistry:
++    """Local feature flag registry backed by an inspectable JSON file."""
++
++    def __init__(self, flags: dict[str, bool] | None = None) -> None:
++        self._flags = dict(DEFAULT_FEATURE_FLAGS)
++        if flags:
++            self._flags.update({name: bool(enabled) for name, enabled in flags.items()})
++
++    @classmethod
++    def from_file(cls, path: str | Path = "registry.json") -> "FeatureRegistry":
++        registry_path = Path(path)
++        if not registry_path.exists():
++            return cls()
++        return cls(json.loads(registry_path.read_text(encoding="utf-8")))
++
++    def is_enabled(self, flag_name: str) -> bool:
++        return bool(self._flags.get(flag_name, False))
++
++
++def is_feature_enabled(flag_name: str, flags: dict | FeatureRegistry | None = None) -> bool:
+     active_flags = flags or FEATURE_FLAGS
++    if isinstance(active_flags, FeatureRegistry):
++        return active_flags.is_enabled(flag_name)
+     return bool(active_flags.get(flag_name, False))
+ 
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+-
+--- a/registry.json
++++ b/registry.json
+@@ -0,0 +1,3 @@
++{
++  "experimental_summary_view": false
++}
+--- a/test_app.py
++++ b/test_app.py
+@@ -14,10 +14,24 @@
+     def test_feature_flags_default_off(self):
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
+ 
++    def test_feature_registry_loads_local_json(self):
++        registry = app.FeatureRegistry.from_file("registry.json")
++
++        self.assertFalse(app.is_feature_enabled("experimental_summary_view", registry))
++
++    def test_feature_registry_accepts_explicit_flags(self):
++        registry = app.FeatureRegistry({"experimental_summary_view": True})
++
++        self.assertTrue(app.is_feature_enabled("experimental_summary_view", registry))
++
++    def test_missing_feature_registry_uses_safe_defaults(self):
++        registry = app.FeatureRegistry.from_file("missing-registry.json")
++
++        self.assertFalse(app.is_feature_enabled("experimental_summary_view", registry))
++
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

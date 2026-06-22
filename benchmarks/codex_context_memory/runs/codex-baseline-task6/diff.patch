@@ -1,0 +1,102 @@
+--- a/app.py
++++ b/app.py
+@@ -4,6 +4,7 @@
+ 
+ import json
+ from pathlib import Path
++from typing import Iterable
+ 
+ 
+ DEFAULT_CONFIG = {
+@@ -53,3 +54,41 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def scan_todo_comments(paths: str | Path | Iterable[str | Path]) -> list[dict]:
++    if isinstance(paths, (str, Path)):
++        scan_paths = [Path(paths)]
++    else:
++        scan_paths = [Path(path) for path in paths]
++
++    todos = []
++    for scan_path in scan_paths:
++        files = [scan_path] if scan_path.is_file() else sorted(path for path in scan_path.rglob("*") if path.is_file())
++        for file_path in files:
++            try:
++                lines = file_path.read_text(encoding="utf-8").splitlines()
++            except UnicodeDecodeError:
++                continue
++
++            for line_number, line in enumerate(lines, start=1):
++                stripped = line.strip()
++                if _is_todo_comment(stripped):
++                    todos.append(
++                        {
++                            "path": str(file_path),
++                            "line": line_number,
++                            "text": stripped,
++                        }
++                    )
++    return todos
++
++
++def format_todo_report(todos: list[dict]) -> str:
++    if not todos:
++        return "No TODO comments found."
++    return "\n".join(f"{todo['path']}:{todo['line']}: {todo['text']}" for todo in todos)
++
++
++def _is_todo_comment(line: str) -> bool:
++    comment_markers = ("#", "//", "/*", "*", "<!--")
++    return line.startswith(comment_markers) and "TODO" in line.upper()
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,6 @@
+ import unittest
++from pathlib import Path
++from unittest.mock import patch
+ 
+ import app
+ 
+@@ -17,7 +19,39 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_scan_todo_comments_reports_comment_locations(self):
++        source_file = Path("module.py")
++        with (
++            patch.object(Path, "is_file", return_value=True),
++            patch.object(
++                Path,
++                "read_text",
++                return_value="value = 'TODO: not a comment'\n# TODO: wire this up\nprint(value)\n",
++            ),
++        ):
++            todos = app.scan_todo_comments(source_file)
++
++        self.assertEqual(
++            todos,
++            [
++                {
++                    "path": str(source_file),
++                    "line": 2,
++                    "text": "# TODO: wire this up",
++                }
++            ],
++        )
++
++    def test_format_todo_report(self):
++        report = app.format_todo_report(
++            [{"path": "module.py", "line": 7, "text": "# TODO: add tests"}]
++        )
++
++        self.assertEqual(report, "module.py:7: # TODO: add tests")
++
++    def test_format_todo_report_when_empty(self):
++        self.assertEqual(app.format_todo_report([]), "No TODO comments found.")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

@@ -1,0 +1,20 @@
+{
+  "condition": "baseline",
+  "evidence_files": [
+    "transcript.md",
+    "diff.patch",
+    "test_output.txt",
+    "final_files.txt",
+    "metadata.json",
+    "benchmark_receipt.json",
+    "scoring_receipt.json"
+  ],
+  "fixture": "C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\fixtures\\baseline_repo",
+  "run_completed": true,
+  "run_id": "codex-baseline-memory-challenge-c",
+  "task_id": "memory_challenge_c",
+  "test_command": "python -m unittest discover",
+  "test_exit_code": 0,
+  "tests_passed": true,
+  "trial_workdir": "C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs\\memory_challenge_c\\baseline"
+}

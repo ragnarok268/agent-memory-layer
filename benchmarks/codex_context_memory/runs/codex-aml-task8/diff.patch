@@ -1,0 +1,90 @@
+--- a/app.py
++++ b/app.py
+@@ -3,12 +3,14 @@
+ from __future__ import annotations
+ 
+ import json
++import sys
+ from pathlib import Path
+ 
+ 
+ DEFAULT_CONFIG = {
+     "project_name": "sample-local-project",
+     "local_only": True,
++    "maintenance_commands": [],
+ }
+ 
+ 
+@@ -53,3 +55,40 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def get_maintenance_commands(config: dict | None = None) -> list[str]:
++    active_config = config or load_config()
++    commands = active_config.get("maintenance_commands", [])
++    if not isinstance(commands, list):
++        raise ValueError("maintenance_commands must be a list")
++    return [str(command) for command in commands]
++
++
++def run_maintenance_commands(config: dict | None = None) -> dict:
++    commands = get_maintenance_commands(config)
++    return {
++        "executed": False,
++        "commands": commands,
++        "message": "Shell execution is disabled; configured maintenance commands were not run.",
++    }
++
++
++def main(argv: list[str] | None = None) -> int:
++    args = list(sys.argv[1:] if argv is None else argv)
++    if args != ["maintenance"]:
++        print("Usage: python app.py maintenance")
++        return 2
++
++    result = run_maintenance_commands()
++    if not result["commands"]:
++        print("No maintenance commands configured.")
++        return 0
++
++    print(result["message"])
++    for command in result["commands"]:
++        print(f"- {command}")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/test_app.py
++++ b/test_app.py
+@@ -17,7 +17,28 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_reads_maintenance_commands_from_config(self):
++        config = {
++            "project_name": "demo",
++            "local_only": True,
++            "maintenance_commands": ["python -m unittest discover"],
++        }
++        self.assertEqual(
++            app.get_maintenance_commands(config),
++            ["python -m unittest discover"],
++        )
++
++    def test_maintenance_command_does_not_execute_shell_commands(self):
++        config = {
++            "project_name": "demo",
++            "local_only": True,
++            "maintenance_commands": ["python -m unittest discover"],
++        }
++        result = app.run_maintenance_commands(config)
++        self.assertFalse(result["executed"])
++        self.assertEqual(result["commands"], ["python -m unittest discover"])
++        self.assertIn("disabled", result["message"])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

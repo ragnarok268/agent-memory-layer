@@ -1,0 +1,12 @@
+{
+  "condition": "aml",
+  "memory_artifact_consulted": true,
+  "memory_artifact_updated_correctly": null,
+  "notes": "Metrics are populated from final agent status, final filesystem state, generated diff, and post-run test output only. Full internal agent transcript was not exposed by the tool; transcript.md preserves the available final status summary.",
+  "rediscovery_required": null,
+  "repair_attempts": 1,
+  "run_completed": true,
+  "run_id": "codex-aml-task6",
+  "task_id": "task6",
+  "tests_passed": true
+}

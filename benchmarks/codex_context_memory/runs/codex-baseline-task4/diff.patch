@@ -1,0 +1,49 @@
+--- a/README.md
++++ b/README.md
+@@ -10,9 +10,15 @@
+ - Prefer Python standard library behavior when it is enough.
+ - Keep project data easy to inspect in git.
+ 
++Feature flags:
++
++- `experimental_summary_view` is default-off.
++- Use `is_feature_enabled("experimental_summary_view")` to check it.
++- `experimental_status_view` is default-off.
++- Use `is_feature_enabled("experimental_status_view")` to check it.
++
+ Run tests:
+ 
+ ```bash
+ python -m unittest discover
+ ```
+-
+--- a/app.py
++++ b/app.py
+@@ -42,6 +42,7 @@
+ 
+ FEATURE_FLAGS = {
+     "experimental_summary_view": False,
++    "experimental_status_view": False,
+ }
+ 
+ 
+@@ -52,4 +53,3 @@
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+-
+--- a/test_app.py
++++ b/test_app.py
+@@ -13,6 +13,7 @@
+ 
+     def test_feature_flags_default_off(self):
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
++        self.assertFalse(app.is_feature_enabled("experimental_status_view"))
+ 
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+@@ -20,4 +21,3 @@
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

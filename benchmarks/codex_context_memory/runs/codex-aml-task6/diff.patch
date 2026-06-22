@@ -1,0 +1,89 @@
+--- a/app.py
++++ b/app.py
+@@ -53,3 +53,42 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def scan_todo_comments(root: str | Path) -> list[dict]:
++    root_path = Path(root)
++    if root_path.is_file():
++        candidate_paths = [root_path]
++        base_path = root_path.parent
++    else:
++        candidate_paths = sorted(path for path in root_path.rglob("*") if path.is_file())
++        base_path = root_path
++
++    findings = []
++    for path in candidate_paths:
++        try:
++            lines = path.read_text(encoding="utf-8").splitlines()
++        except UnicodeDecodeError:
++            continue
++
++        for line_number, line in enumerate(lines, start=1):
++            column = line.find("TODO")
++            if column == -1:
++                continue
++            findings.append(
++                {
++                    "path": str(path.relative_to(base_path)),
++                    "line": line_number,
++                    "column": column + 1,
++                    "text": line.strip(),
++                }
++            )
++    return findings
++
++
++def format_todo_report(findings: list[dict]) -> str:
++    if not findings:
++        return "No TODO comments found."
++    return "\n".join(
++        f"{finding['path']}:{finding['line']}:{finding['column']}: {finding['text']}"
++        for finding in findings
++    )
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,6 @@
+ import unittest
++from pathlib import Path
++from unittest.mock import patch
+ 
+ import app
+ 
+@@ -17,7 +19,33 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_scan_todo_comments_reports_findings(self):
++        source_path = Path.cwd() / "notes.py"
++        source = "print('ready')\n# TODO: add validation\n"
++
++        with patch.object(Path, "is_file", return_value=True):
++            with patch.object(Path, "read_text", return_value=source):
++                findings = app.scan_todo_comments(source_path)
++
++        self.assertEqual(
++            findings,
++            [
++                {
++                    "path": "notes.py",
++                    "line": 2,
++                    "column": 3,
++                    "text": "# TODO: add validation",
++                },
++            ],
++        )
++        self.assertEqual(
++            app.format_todo_report(findings),
++            "notes.py:2:3: # TODO: add validation",
++        )
++
++    def test_format_todo_report_handles_no_findings(self):
++        self.assertEqual(app.format_todo_report([]), "No TODO comments found.")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

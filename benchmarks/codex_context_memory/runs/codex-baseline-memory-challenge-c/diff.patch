@@ -1,0 +1,103 @@
+--- a/README.md
++++ b/README.md
+@@ -16,3 +16,8 @@
+ python -m unittest discover
+ ```
+ 
++Advanced maintenance report:
++
++```bash
++python app.py maintenance
++```
+--- a/app.py
++++ b/app.py
+@@ -2,6 +2,7 @@
+ 
+ from __future__ import annotations
+ 
++import argparse
+ import json
+ from pathlib import Path
+ 
+@@ -53,3 +54,55 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def build_maintenance_report(config_path: str | Path = "project_config.json") -> dict:
++    config = load_config(config_path)
++    return {
++        "configured": is_configured(config),
++        "local_only": config.get("local_only") is True,
++        "project_name": config.get("project_name", ""),
++        "feature_flags": dict(FEATURE_FLAGS),
++    }
++
++
++def format_maintenance_report(report: dict) -> str:
++    flags = ", ".join(
++        f"{name}={str(enabled).lower()}"
++        for name, enabled in sorted(report["feature_flags"].items())
++    )
++    return "\n".join(
++        [
++            "Maintenance report",
++            f"project_name: {report['project_name']}",
++            f"configured: {str(report['configured']).lower()}",
++            f"local_only: {str(report['local_only']).lower()}",
++            f"feature_flags: {flags or 'none'}",
++        ]
++    )
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser(description="Local project helper commands.")
++    subparsers = parser.add_subparsers(dest="command")
++
++    maintenance_parser = subparsers.add_parser(
++        "maintenance",
++        help="print a local-only maintenance report",
++    )
++    maintenance_parser.add_argument(
++        "--config",
++        default="project_config.json",
++        help="path to the project config file",
++    )
++
++    args = parser.parse_args(argv)
++    if args.command == "maintenance":
++        print(format_maintenance_report(build_maintenance_report(args.config)))
++        return 0
++
++    parser.print_help()
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/test_app.py
++++ b/test_app.py
+@@ -17,7 +17,22 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_maintenance_report_uses_default_config(self):
++        report = app.build_maintenance_report("missing-project-config.json")
++        self.assertTrue(report["configured"])
++        self.assertTrue(report["local_only"])
++        self.assertEqual(report["project_name"], "sample-local-project")
++
++    def test_format_maintenance_report(self):
++        report = {
++            "configured": True,
++            "local_only": True,
++            "project_name": "demo",
++            "feature_flags": {"beta": False},
++        }
++        self.assertIn("project_name: demo", app.format_maintenance_report(report))
++        self.assertIn("feature_flags: beta=false", app.format_maintenance_report(report))
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

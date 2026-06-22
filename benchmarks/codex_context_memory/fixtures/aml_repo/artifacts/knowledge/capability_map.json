@@ -1,0 +1,21 @@
+{
+  "project": "sample-local-project",
+  "capabilities": {
+    "network": "not_allowed",
+    "telemetry": "not_allowed",
+    "remote_api_clients": "not_allowed",
+    "shell_execution": "rejected",
+    "database": "rejected_for_fixture",
+    "filesystem_reads": "allowed_for_local_project_files",
+    "filesystem_writes": "allowed_only_when explicitly requested",
+    "source_file_mutation": "not_allowed_for_read_only_scanners",
+    "random_identifier_generation": "rejected_for_exported_reports",
+    "feature_flags": "use_existing_FeatureRegistry_and_registry_json"
+  },
+  "notes": [
+    "Capability boundary for Task 6: read-only analysis tooling must report TODO comments without modifying user source files.",
+    "Capability boundary for Task 8 and Memory Challenge C: shell execution was rejected for safety.",
+    "Memory Challenge B: UUIDv4 was rejected because downstream systems require deterministic identifiers for reproducibility.",
+    "Memory Challenge D: reuse FeatureRegistry and registry.json rather than inventing a second feature-flag mechanism."
+  ]
+}

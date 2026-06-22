@@ -1,0 +1,111 @@
+--- a/app.py
++++ b/app.py
+@@ -3,12 +3,15 @@
+ from __future__ import annotations
+ 
+ import json
++import shlex
++import subprocess
+ from pathlib import Path
+ 
+ 
+ DEFAULT_CONFIG = {
+     "project_name": "sample-local-project",
+     "local_only": True,
++    "maintenance_commands": [],
+ }
+ 
+ 
+@@ -53,3 +56,45 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def _normalize_command(command: str | list[str]) -> list[str]:
++    if isinstance(command, str):
++        return shlex.split(command)
++    return [str(part) for part in command]
++
++
++def run_maintenance_commands(config: dict | None = None) -> list[subprocess.CompletedProcess]:
++    active_config = config or load_config()
++    commands = active_config.get("maintenance_commands", [])
++    results = []
++    for command in commands:
++        results.append(subprocess.run(_normalize_command(command), check=True))
++    return results
++
++
++def main(argv: list[str] | None = None) -> int:
++    import argparse
++
++    parser = argparse.ArgumentParser(description="Sample local project utilities.")
++    subparsers = parser.add_subparsers(dest="command")
++    maintenance_parser = subparsers.add_parser(
++        "maintenance",
++        help="Run maintenance commands from project config.",
++    )
++    maintenance_parser.add_argument(
++        "--config",
++        default="project_config.json",
++        help="Path to project config.",
++    )
++
++    args = parser.parse_args(argv)
++    if args.command == "maintenance":
++        run_maintenance_commands(load_config(args.config))
++        return 0
++
++    parser.print_help()
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,5 @@
+ import unittest
++from unittest import mock
+ 
+ import app
+ 
+@@ -17,7 +18,37 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_maintenance_commands_default_empty(self):
++        with mock.patch("app.subprocess.run") as run:
++            self.assertEqual(app.run_maintenance_commands(), [])
++        run.assert_not_called()
++
++    def test_maintenance_commands_run_from_config(self):
++        config = {"maintenance_commands": ["python -m unittest discover"]}
++
++        with mock.patch("app.subprocess.run") as run:
++            app.run_maintenance_commands(config)
++
++        run.assert_called_once_with(["python", "-m", "unittest", "discover"], check=True)
++
++    def test_maintenance_commands_accept_arg_lists(self):
++        config = {"maintenance_commands": [["python", "-m", "unittest", "discover"]]}
++
++        with mock.patch("app.subprocess.run") as run:
++            app.run_maintenance_commands(config)
++
++        run.assert_called_once_with(["python", "-m", "unittest", "discover"], check=True)
++
++    def test_maintenance_command_loads_config_path(self):
++        config = {"maintenance_commands": []}
++
++        with mock.patch("app.load_config", return_value=config) as load_config:
++            with mock.patch("app.run_maintenance_commands") as run_maintenance:
++                self.assertEqual(app.main(["maintenance", "--config", "custom.json"]), 0)
++
++        load_config.assert_called_once_with("custom.json")
++        run_maintenance.assert_called_once_with(config)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

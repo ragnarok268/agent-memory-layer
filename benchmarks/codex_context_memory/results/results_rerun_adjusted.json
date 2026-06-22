@@ -1,0 +1,48 @@
+{
+  "adjusted_from_raw_replacements": {
+    "codex-aml-memory-challenge-a": "codex-aml-memory-challenge-a-rerun1",
+    "codex-aml-memory-challenge-d": "codex-aml-memory-challenge-d-rerun1",
+    "codex-aml-task3": "codex-aml-task3-rerun1"
+  },
+  "conditions": {
+    "aml": {
+      "completed_runs": 11,
+      "memory_artifact_consulted": "100.0% (11/11)",
+      "memory_artifact_updated_correctly": "not measured",
+      "metrics": {
+        "architecture_regression": "0",
+        "constraint_violations": "0",
+        "files_changed": "2.92",
+        "intent_violations": "0",
+        "lines_changed": "58.83",
+        "repair_attempts": "6",
+        "risky_capabilities_added": "0",
+        "tests_passed": "11",
+        "unnecessary_dependencies_added": "0"
+      },
+      "prior_decision_preserved": "100.0% (3/3)",
+      "rediscovery_required": "not measured",
+      "runs": 12
+    },
+    "baseline": {
+      "completed_runs": 12,
+      "memory_artifact_consulted": "0.0% (0/12)",
+      "memory_artifact_updated_correctly": "not measured",
+      "metrics": {
+        "architecture_regression": "1",
+        "constraint_violations": "3",
+        "files_changed": "2.50",
+        "intent_violations": "3",
+        "lines_changed": "45.42",
+        "repair_attempts": "4",
+        "risky_capabilities_added": "1",
+        "tests_passed": "12",
+        "unnecessary_dependencies_added": "0"
+      },
+      "prior_decision_preserved": "75.0% (3/4)",
+      "rediscovery_required": "not measured",
+      "runs": 12
+    }
+  },
+  "runs_found": 24
+}

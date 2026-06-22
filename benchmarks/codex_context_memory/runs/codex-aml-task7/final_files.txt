@@ -1,0 +1,15 @@
+AGENTS.md
+README.md
+__pycache__/app.cpython-313.pyc.1497193751952
+__pycache__/app.cpython-313.pyc.1782299333136
+__pycache__/app.cpython-313.pyc.1824224547344
+__pycache__/test_app.cpython-313.pyc.1497192587408
+__pycache__/test_app.cpython-313.pyc.1782298173584
+__pycache__/test_app.cpython-313.pyc.1824223387792
+app.py
+artifacts/knowledge/capability_map.json
+artifacts/knowledge/decision_log.md
+artifacts/knowledge/handoff_card.md
+artifacts/knowledge/intent.yaml
+registry.json
+test_app.py

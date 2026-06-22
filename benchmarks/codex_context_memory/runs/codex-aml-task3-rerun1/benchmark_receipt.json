@@ -1,0 +1,23 @@
+{
+  "classification": "success",
+  "condition": "aml",
+  "evidence_files": [
+    "transcript.md",
+    "diff.patch",
+    "test_output.txt",
+    "final_files.txt",
+    "metadata.json",
+    "benchmark_receipt.json",
+    "scoring_receipt.json"
+  ],
+  "fixture": "C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\fixtures\\aml_repo",
+  "rerun": true,
+  "rerun_of": "codex-aml-task3",
+  "run_completed": true,
+  "run_id": "codex-aml-task3-rerun1",
+  "task_id": "task3",
+  "test_command": "python -m unittest discover",
+  "test_exit_code": 0,
+  "tests_passed": true,
+  "trial_workdir": "C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs_rerun\\rerun1\\task3\\aml"
+}

@@ -1,0 +1,29 @@
+E.....E
+======================================================================
+ERROR: test_add_recent_summary_keeps_newest_first_and_limit (test_app.AppTests.test_add_recent_summary_keeps_newest_first_and_limit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\tmp\agent-memory-layer-release-audit-20260619-140947\agent-memory-layer\benchmarks\codex_context_memory\trial_workdirs_rerun\rerun1\memory_challenge_a\aml\test_app.py", line 11, in <lambda>
+    self.addCleanup(lambda: path.unlink(missing_ok=True))
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Brandon Caylor\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 746, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs_rerun\\rerun1\\memory_challenge_a\\aml\\.test_recent_summaries_limit.json'
+
+======================================================================
+ERROR: test_recent_summaries_persist_to_local_file (test_app.AppTests.test_recent_summaries_persist_to_local_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\tmp\agent-memory-layer-release-audit-20260619-140947\agent-memory-layer\benchmarks\codex_context_memory\trial_workdirs_rerun\rerun1\memory_challenge_a\aml\test_app.py", line 11, in <lambda>
+    self.addCleanup(lambda: path.unlink(missing_ok=True))
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Brandon Caylor\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 746, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs_rerun\\rerun1\\memory_challenge_a\\aml\\.test_recent_summaries_persist.json'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.029s
+
+FAILED (errors=2)

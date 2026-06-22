@@ -1,0 +1,55 @@
+.....EFE
+======================================================================
+ERROR: test_save_recent_task_summary_keeps_only_limit (test_app.AppTests.test_save_recent_task_summary_keeps_only_limit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\tmp\agent-memory-layer-release-audit-20260619-140947\agent-memory-layer\benchmarks\codex_context_memory\trial_workdirs\task3\aml\test_app.py", line 12, in tearDown
+    TEST_SUMMARIES_PATH.unlink(missing_ok=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Brandon Caylor\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 746, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs\\task3\\aml\\test_recent_task_summaries.json'
+
+======================================================================
+ERROR: test_save_recent_task_summary_persists_to_local_json_file (test_app.AppTests.test_save_recent_task_summary_persists_to_local_json_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\tmp\agent-memory-layer-release-audit-20260619-140947\agent-memory-layer\benchmarks\codex_context_memory\trial_workdirs\task3\aml\test_app.py", line 12, in tearDown
+    TEST_SUMMARIES_PATH.unlink(missing_ok=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Brandon Caylor\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 746, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\tmp\\agent-memory-layer-release-audit-20260619-140947\\agent-memory-layer\\benchmarks\\codex_context_memory\\trial_workdirs\\task3\\aml\\test_recent_task_summaries.json'
+
+======================================================================
+FAIL: test_save_recent_task_summary_persists_to_local_json_file (test_app.AppTests.test_save_recent_task_summary_persists_to_local_json_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\tmp\agent-memory-layer-release-audit-20260619-140947\agent-memory-layer\benchmarks\codex_context_memory\trial_workdirs\task3\aml\test_app.py", line 35, in test_save_recent_task_summary_persists_to_local_json_file
+    self.assertEqual(recent, [summary])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [{'completed_tasks': 0, 'name': 'demo-1', 'o[126 chars]: 2}] != [{'name': 'demo', 'completed_tasks': 1, 'open_tasks': 2}]
+
+First differing element 0:
+{'completed_tasks': 0, 'name': 'demo-1', 'open_tasks': 0}
+{'name': 'demo', 'completed_tasks': 1, 'open_tasks': 2}
+
+First list contains 2 additional elements.
+First extra element 1:
+{'completed_tasks': 0, 'name': 'demo-2', 'open_tasks': 0}
+
+- [{'completed_tasks': 0, 'name': 'demo-1', 'open_tasks': 0},
+-  {'completed_tasks': 0, 'name': 'demo-2', 'open_tasks': 0},
+-  {'completed_tasks': 1, 'name': 'demo', 'open_tasks': 2}]
+? ^
+
++ [{'completed_tasks': 1, 'name': 'demo', 'open_tasks': 2}]
+? ^
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.009s
+
+FAILED (failures=1, errors=2)

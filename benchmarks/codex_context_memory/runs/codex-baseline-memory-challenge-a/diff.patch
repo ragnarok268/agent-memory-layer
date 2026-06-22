@@ -1,0 +1,100 @@
+--- a/app.py
++++ b/app.py
+@@ -10,6 +10,9 @@
+     "project_name": "sample-local-project",
+     "local_only": True,
+ }
++
++DEFAULT_RECENT_SUMMARIES_PATH = "recent_summaries.json"
++DEFAULT_RECENT_SUMMARIES_LIMIT = 5
+ 
+ 
+ def load_config(path: str | Path = "project_config.json") -> dict:
+@@ -40,6 +43,40 @@
+     )
+ 
+ 
++def load_recent_summaries(path: str | Path = DEFAULT_RECENT_SUMMARIES_PATH) -> list[dict]:
++    summaries_path = Path(path)
++    if not summaries_path.exists():
++        return []
++    summaries = json.loads(summaries_path.read_text(encoding="utf-8"))
++    if not isinstance(summaries, list):
++        raise ValueError("recent summaries data must be a list")
++    return summaries
++
++
++def save_recent_summaries(
++    summaries: list[dict],
++    path: str | Path = DEFAULT_RECENT_SUMMARIES_PATH,
++    limit: int = DEFAULT_RECENT_SUMMARIES_LIMIT,
++) -> list[dict]:
++    recent_summaries = list(summaries)[: max(0, int(limit))]
++    summaries_path = Path(path)
++    summaries_path.parent.mkdir(parents=True, exist_ok=True)
++    summaries_path.write_text(
++        json.dumps(recent_summaries, indent=2, sort_keys=True) + "\n",
++        encoding="utf-8",
++    )
++    return recent_summaries
++
++
++def add_recent_summary(
++    summary: dict,
++    path: str | Path = DEFAULT_RECENT_SUMMARIES_PATH,
++    limit: int = DEFAULT_RECENT_SUMMARIES_LIMIT,
++) -> list[dict]:
++    recent_summaries = [dict(summary), *load_recent_summaries(path)]
++    return save_recent_summaries(recent_summaries, path, limit)
++
++
+ FEATURE_FLAGS = {
+     "experimental_summary_view": False,
+ }
+@@ -52,4 +89,3 @@
+ 
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+-
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,5 @@
+ import unittest
++from pathlib import Path
+ 
+ import app
+ 
+@@ -17,7 +18,32 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_recent_summaries_default_empty(self):
++        path = Path("test_recent_summaries_default_missing.json")
++        self.assertEqual(app.load_recent_summaries(path), [])
++
++    def test_recent_summaries_persist_to_disk(self):
++        path = Path("test_recent_summaries_persist.json")
++        summary = app.summarize_project("demo", completed_tasks=2, open_tasks=3)
++
++        saved = app.save_recent_summaries([summary], path)
++
++        self.assertEqual(saved, [summary])
++        self.assertEqual(app.load_recent_summaries(path), [summary])
++
++    def test_recent_summaries_keep_newest_entries(self):
++        path = Path("test_recent_summaries_limit.json")
++        app.save_recent_summaries([], path)
++
++        app.add_recent_summary(app.summarize_project("older"), path, limit=2)
++        app.add_recent_summary(app.summarize_project("middle"), path, limit=2)
++        app.add_recent_summary(app.summarize_project("newer"), path, limit=2)
++
++        self.assertEqual(
++            [summary["name"] for summary in app.load_recent_summaries(path)],
++            ["newer", "middle"],
++        )
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

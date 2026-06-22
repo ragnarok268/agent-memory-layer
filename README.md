@@ -107,6 +107,14 @@ Observed in the Codex A/B trials so far:
 
 The strongest current summary is [EVIDENCE.md](EVIDENCE.md). The reproducible experiment harness lives in [experiments/ab_adoption](experiments/ab_adoption/README.md).
 
+## Benchmark & Evaluation
+
+Agent Memory Layer includes a reproducible benchmark under [benchmarks/codex_context_memory](benchmarks/codex_context_memory/) that evaluates repository-local memory in AI-assisted development.
+
+The benchmark compares a README-only baseline against repositories enhanced with structured memory artifacts across fresh coding-agent sessions. It measures intent preservation, constraint adherence, architectural consistency, and related behaviors while preserving raw evidence, reruns, and known limitations.
+
+This benchmark is experimental and intended to evaluate repository-local engineering memory on the included tasks. It does **not** claim universal improvement across models or software projects. All documented limitations and unresolved cases are retained in the published evidence.
+
 ## What limitations remain
 
 Not yet established:

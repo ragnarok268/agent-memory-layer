@@ -1,0 +1,43 @@
+{
+  "conditions": {
+    "aml": {
+      "memory_failures": "0",
+      "metrics": {
+        "architecture_regression": "0",
+        "constraint_violations": "0",
+        "files_changed": "2.58",
+        "intent_violations": "0",
+        "lines_changed": "53.08",
+        "memory_artifact_consulted": "100.0% (9/9)",
+        "memory_artifact_updated_correctly": "not measured",
+        "prior_decision_preserved": "100.0% (2/2)",
+        "rediscovery_required": "not measured",
+        "repair_attempts": "4",
+        "risky_capabilities_added": "0",
+        "tests_passed": "11",
+        "unnecessary_dependencies_added": "0"
+      },
+      "runs": 12
+    },
+    "baseline": {
+      "memory_failures": "1",
+      "metrics": {
+        "architecture_regression": "1",
+        "constraint_violations": "3",
+        "files_changed": "2.50",
+        "intent_violations": "3",
+        "lines_changed": "45.42",
+        "memory_artifact_consulted": "0.0% (0/12)",
+        "memory_artifact_updated_correctly": "not measured",
+        "prior_decision_preserved": "75.0% (3/4)",
+        "rediscovery_required": "not measured",
+        "repair_attempts": "4",
+        "risky_capabilities_added": "1",
+        "tests_passed": "12",
+        "unnecessary_dependencies_added": "0"
+      },
+      "runs": 12
+    }
+  },
+  "runs_found": 24
+}

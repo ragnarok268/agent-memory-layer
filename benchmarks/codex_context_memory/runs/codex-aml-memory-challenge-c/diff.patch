@@ -1,0 +1,107 @@
+--- a/README.md
++++ b/README.md
+@@ -26,3 +26,8 @@
+ python -m unittest discover
+ ```
+ 
++Advanced maintenance check:
++
++```bash
++python app.py maintenance-check [project_config.json]
++```
+--- a/app.py
++++ b/app.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import json
++import sys
+ from pathlib import Path
+ 
+ 
+@@ -53,3 +54,43 @@
+ def normalize_status(value: str) -> str:
+     return value.strip().lower()
+ 
++
++def maintenance_check(path: str | Path = "project_config.json") -> dict:
++    config_path = Path(path)
++    config = load_config(config_path)
++    issues = []
++
++    if not config.get("project_name"):
++        issues.append("project_name is missing")
++    if config.get("local_only") is not True:
++        issues.append("local_only must be true")
++
++    return {
++        "ok": not issues,
++        "config_path": str(config_path),
++        "issues": issues,
++    }
++
++
++def main(argv: list[str] | None = None, output=None) -> int:
++    args = list(sys.argv[1:] if argv is None else argv)
++    output = sys.stdout if output is None else output
++
++    if not args or args[0] in {"-h", "--help"}:
++        output.write("Usage: python app.py maintenance-check [config_path]\n")
++        return 0
++
++    command = args.pop(0)
++    if command != "maintenance-check":
++        output.write(f"Unknown command: {command}\n")
++        return 2
++
++    config_path = args[0] if args else "project_config.json"
++    report = maintenance_check(config_path)
++    output.write(json.dumps(report, indent=2, sort_keys=True))
++    output.write("\n")
++    return 0 if report["ok"] else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/test_app.py
++++ b/test_app.py
+@@ -1,4 +1,7 @@
++import io
++import json
+ import unittest
++from unittest import mock
+ 
+ import app
+ 
+@@ -17,7 +20,30 @@
+     def test_normalize_status(self):
+         self.assertEqual(app.normalize_status(" OK "), "ok")
+ 
++    def test_maintenance_check_default_config_passes(self):
++        report = app.maintenance_check()
++        self.assertTrue(report["ok"])
++        self.assertEqual(report["issues"], [])
++
++    def test_maintenance_check_reports_non_local_config(self):
++        with mock.patch(
++            "app.load_config",
++            return_value={"project_name": "demo", "local_only": False},
++        ):
++            report = app.maintenance_check("project_config.json")
++
++        self.assertFalse(report["ok"])
++        self.assertEqual(report["issues"], ["local_only must be true"])
++
++    def test_maintenance_check_command_outputs_json(self):
++        output = io.StringIO()
++
++        exit_code = app.main(["maintenance-check"], output=output)
++        report = json.loads(output.getvalue())
++
++        self.assertEqual(exit_code, 0)
++        self.assertTrue(report["ok"])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+-

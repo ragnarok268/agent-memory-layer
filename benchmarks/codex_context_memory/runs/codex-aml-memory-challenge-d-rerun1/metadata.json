@@ -1,0 +1,16 @@
+{
+  "classification": "success",
+  "condition": "aml",
+  "memory_artifact_consulted": true,
+  "memory_artifact_updated_correctly": null,
+  "notes": "Rerun evidence generated separately from original interrupted run artifacts. Full internal transcript was not exposed; transcript.md preserves available final status summary or shutdown classification.",
+  "rediscovery_required": null,
+  "repair_attempts": 1,
+  "rerun": true,
+  "rerun_label": "rerun1",
+  "rerun_of": "codex-aml-memory-challenge-d",
+  "run_completed": true,
+  "run_id": "codex-aml-memory-challenge-d-rerun1",
+  "task_id": "memory_challenge_d",
+  "tests_passed": true
+}

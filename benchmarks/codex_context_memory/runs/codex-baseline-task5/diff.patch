@@ -1,0 +1,20 @@
+--- a/app.py
++++ b/app.py
+@@ -51,5 +51,4 @@
+ 
+ 
+ def normalize_status(value: str) -> str:
+-    return value.strip().lower()
+-
++    return value.strip().upper()
+--- a/test_app.py
++++ b/test_app.py
+@@ -15,7 +15,7 @@
+         self.assertFalse(app.is_feature_enabled("experimental_summary_view"))
+ 
+     def test_normalize_status(self):
+-        self.assertEqual(app.normalize_status(" OK "), "ok")
++        self.assertEqual(app.normalize_status(" OK "), "OK")
+ 
+ 
+ if __name__ == "__main__":
